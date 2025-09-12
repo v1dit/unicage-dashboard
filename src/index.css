@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* custom utility classes for our app */
+:root { color-scheme: light dark; }
+html, body, #root { height: 100%; }
+body { @apply bg-slate-50 text-slate-800; }
+
+.container-app { @apply max-w-5xl mx-auto px-4; }
+.card { @apply rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6; }
+.badge { @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium; }
+.badge-ok { @apply bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200; }
+.badge-pending { @apply bg-amber-50 text-amber-700 ring-1 ring-amber-200; }
+.input { @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500; }
+.btn { @apply inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-white hover:bg-indigo-700 disabled:opacity-50; }
+.label { @apply block text-sm font-medium text-slate-600 mb-2; }
+.mono { @apply font-mono text-sm; }
