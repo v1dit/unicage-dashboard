@@ -17,3 +17,4 @@ export const api = {
       body: JSON.stringify({ to, amount, memo }),
     }).then(j<InitiateResp>),
 };
+export default api;
