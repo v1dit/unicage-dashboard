@@ -13,8 +13,14 @@ export function Send() {
     setLoading(true);
     setStatus("");
     try {
-      const r = await api.payInitiate(to.trim(), amount.trim(), memo.trim() || undefined);
-      setStatus(`status: ${r.status} | tx: ${r.txHash}`);
+      const body: { to: string; amount: string; memo?: string } = {
+        to: to.trim(),
+        amount: amount.trim(),
+      };
+      const m = memo.trim();
+      if (m) body.memo = m;
+  const r = await api.initiate(body);
+  setStatus(`tx: ${r.txHash}`);
       setMemo("");
     } catch (e: any) {
       setStatus(`error: ${e.message}`);

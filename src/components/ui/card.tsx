@@ -1,52 +1,27 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+type DivProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function Card({ className = "", children }: { className?: string; children: React.ReactNode }) {
-  return <div className={`rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6 ${className}`}>{children}</div>;
-}
-export function CardHeader({ title, subtitle }: { title: string; subtitle?: string }) {
-  return (
-    <div className="mb-4">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      {subtitle && <p className="text-sm text-slate-500 mt-1">{subtitle}</p>}
-    </div>
-  );
-}
-export function CardSection({ children }: { children: React.ReactNode }) {
-  return <div className="mt-4">{children}</div>;
+export function Card({ className = "", ...props }: DivProps) {
+  return <div className={`rounded-2xl border bg-white shadow-sm ${className}`} {...props} />;
 }
 
-const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-CardDescription.displayName = "CardDescription"
+export function CardHeader({ className = "", ...props }: DivProps) {
+  return <div className={`p-6 ${className}`} {...props} />;
+}
 
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
-CardContent.displayName = "CardContent"
+export function CardTitle({ className = "", ...props }: DivProps) {
+  return <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`} {...props} />;
+}
 
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-))
-CardFooter.displayName = "CardFooter"
+export function CardDescription({ className = "", ...props }: DivProps) {
+  return <p className={`text-sm text-gray-500 ${className}`} {...props} />;
+}
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export function CardContent({ className = "", ...props }: DivProps) {
+  return <div className={`p-6 pt-0 ${className}`} {...props} />;
+}
+
+export function CardFooter({ className = "", ...props }: DivProps) {
+  return <div className={`p-6 pt-0 ${className}`} {...props} />;
+}

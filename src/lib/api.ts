@@ -1,22 +1,31 @@
-const BASE = import.meta.env.VITE_API_BASE?.replace(/\/+$/,"") || "";
+// src/lib/api.ts
+export type Health = { ok: boolean; version: string; chainId: number };
 
-export type Health = { ok: boolean; version: string; chainId: number|string };
-export type PayInitReq = { to: string; amount: string };
-export type PayInitRes = Record<string, unknown>;
+type WalletBalanceRes = {
+  address?: string;          // some backends include this
+  balance: string;           // "1250.75"
+  symbol?: string;           // "OG"
+};
+
+type PayInitReq = { to: string; amount: string; memo?: string };
+type PayInitRes = { txHash: string };
+
+const BASE =
+  import.meta.env.VITE_API_BASE?.trim() ||
+  "https://unicage-deaios-payments-online-1.onrender.com";
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
+  const r = await fetch(`${BASE}${path}`, {
+    headers: { "Content-Type": "application/json" },
     ...init,
-    headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
-    credentials: "omit",
-    cache: "no-store",
   });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-  return res.json() as Promise<T>;
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  return r.json() as Promise<T>;
 }
 
 export const api = {
   health: () => http<Health>("/health"),
+  balance: () => http<WalletBalanceRes>("/wallet/balance"),
   initiate: (body: PayInitReq) =>
     http<PayInitRes>("/pay/initiate", { method: "POST", body: JSON.stringify(body) }),
 };
