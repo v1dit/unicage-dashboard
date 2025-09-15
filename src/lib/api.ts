@@ -1,4 +1,32 @@
 // src/lib/api.ts
+const BASE =
+  import.meta.env.VITE_API_BASE?.replace(/\/+$/, "") ||
+  "";
+
+async function j<T>(p: Promise<Response>): Promise<T> {
+  const r = await p;
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  return r.json() as Promise<T>;
+}
+
+export type BalanceResp = { address: string; balance: string };
+export type InitiateResp = { txHash?: string; status?: string; error?: string };
+
+export const api = {
+  health: () => j<{ ok: boolean; version: string; chainId: number }>(
+    fetch(`${BASE}/health`)
+  ),
+  balance: () => j<BalanceResp>(fetch(`${BASE}/wallet/balance`)),
+  initiate: (to: string, amount: string) =>
+    j<InitiateResp>(
+      fetch(`${BASE}/pay/initiate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, amount }),
+      })
+    ),
+};
+// src/lib/api.ts
 export type Health = { ok: boolean; version: string; chainId: number };
 
 type WalletBalanceRes = {
