@@ -1,24 +1,22 @@
-import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
-import { Dashboard } from "./routes/dashboard";
-import { Send } from "./routes/send";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Wallet from "./pages/Wallet";
+import Send from "./pages/Send";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <div>
-        <header style={{ borderBottom: "1px solid #eee" }}>
-          <nav style={{ maxWidth: 860, margin: "0 auto", padding: 12, display: "flex", gap: 12 }}>
-            <Link to="/dashboard">Dashboard</Link>
-            <Link to="/send">Send</Link>
-          </nav>
-        </header>
-        <main>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/send" element={<Send />} />
-          </Routes>
-        </main>
+      <div className="max-w-2xl mx-auto p-6 space-y-6">
+        <Routes>
+          {/* Dashboard page (main landing) */}
+          <Route path="/" element={<Dashboard />} />
+
+          {/* Wallet info page */}
+          <Route path="/wallet" element={<Wallet />} />
+
+          {/* Send tokens page */}
+          <Route path="/send" element={<Send />} />
+        </Routes>
       </div>
     </BrowserRouter>
   );

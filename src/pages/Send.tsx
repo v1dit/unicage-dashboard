@@ -1,80 +1,61 @@
 import { useState } from "react";
-import { Card, CardHeader } from "../components/ui/Card";
-import { Button, Input, Label, Textarea } from "../components/ui/Fields";
-import StatusBadge from "../components/ui/StatusBadge";
 
 export default function Send() {
+  const API = import.meta.env.VITE_API_BASE;
   const [to, setTo] = useState("");
-  const [amount, setAmount] = useState("1.00");
-  const [memo, setMemo] = useState("");
-  const [status, setStatus] = useState<"idle"|"pending"|"ok"|"error">("idle");
-  const [tx, setTx] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
+  const [amount, setAmount] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
-  const onSend = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("pending"); setErr(null); setTx(null);
+    setBusy(true);
+    setResult(null);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE}/pay/initiate`, {
+      const r = await fetch(`${API}/pay/initiate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ to, amount, note: memo }),
+        body: JSON.stringify({ to, amount }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? "Failed");
-      setTx(data?.txHash ?? data?.tx ?? "0x…");
-      setStatus("ok");
-    } catch (e:any) {
-      setErr(e?.message ?? "Unknown error");
-      setStatus("error");
+      setResult(await r.json());
+    } catch (err: any) {
+      setResult({ ok: false, error: err.message });
+    } finally {
+      setBusy(false);
     }
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <Card>
-        <CardHeader title="Send Payment" subtitle="Demo mode returns a mock tx hash" />
-        <form onSubmit={onSend} className="space-y-4">
-          <div>
-            <Label>Recipient Address</Label>
-            <Input value={to} onChange={e=>setTo(e.target.value)} placeholder="0x…" required />
-          </div>
-          <div>
-            <Label>Amount (OG)</Label>
-            <Input type="number" step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} required />
-          </div>
-          <div>
-            <Label>Memo (optional)</Label>
-            <Textarea rows={3} value={memo} onChange={e=>setMemo(e.target.value)} />
-          </div>
-          <Button disabled={status==="pending"}>Send Payment</Button>
-          <div className="pt-1">
-            {status === "pending" && <StatusBadge status="pending" />}
-            {status === "ok" && <StatusBadge status="ok" />}
-            {status === "error" && <StatusBadge status="error" />}
-          </div>
-        </form>
-      </Card>
+    <div className="rounded-2xl bg-green-50 p-6 border border-green-100 shadow-sm">
+      <h2 className="text-xl font-semibold mb-4">Send Tokens</h2>
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">Recipient Address</label>
+          <input value={to} onChange={e=>setTo(e.target.value)} placeholder="0x..." 
+            className="w-full rounded-xl border px-3 py-2" />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">Amount (OG)</label>
+          <input value={amount} onChange={e=>setAmount(e.target.value)} placeholder="0.00" 
+            className="w-full rounded-xl border px-3 py-2" />
+          <div className="text-sm text-gray-500 mt-1">Estimated fee: 0.001 OG</div>
+        </div>
+        <div className="rounded-xl bg-yellow-50 border border-yellow-200 p-3 text-sm text-yellow-800">
+          ⚠ Blockchain transactions cannot be reversed. Please verify the recipient address carefully.
+        </div>
+        <button disabled={busy} 
+          className="w-full rounded-xl bg-green-600 text-white py-3 font-semibold hover:bg-green-700">
+          {busy ? "Sending..." : "Send Tokens"}
+        </button>
+      </form>
 
-      <Card>
-        <CardHeader title="Result" />
-        {!tx && !err && <div className="text-slate-500 text-sm">No transaction yet.</div>}
-        {tx && (
-          <div className="space-y-2">
-            <div className="text-sm text-slate-500">Transaction Hash</div>
-            <div className="font-mono bg-slate-50 p-3 rounded-xl break-all">{tx}</div>
-          </div>
-        )}
-        {err && (
-          <div className="space-y-2">
-            <div className="text-sm text-slate-500">Error</div>
-            <div className="font-mono bg-rose-50 text-rose-700 p-3 rounded-xl ring-1 ring-rose-200 break-all">{err}</div>
-          </div>
-        )}
-        <p className="text-xs text-slate-500 mt-6">
-          * Real testnet transfers can be enabled later via ethers.js + OG RPC.
-        </p>
-      </Card>
+      {result && (
+        <div className="mt-4 text-sm">
+          {result.ok
+            ? <>✅ Tx: <a className="underline" href={`https://chainscan-galileo.0g.ai/tx/${result.hash}`} target="_blank">{result.hash}</a></>
+            : <>❌ {result.error}</>}
+        </div>
+      )}
     </div>
   );
 }
