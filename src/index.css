@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,3 +17,16 @@ body { @apply bg-slate-50 text-slate-800; }
 .btn { @apply inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-white hover:bg-indigo-700 disabled:opacity-50; }
 .label { @apply block text-sm font-medium text-slate-600 mb-2; }
 .mono { @apply font-mono text-sm; }
+
+@layer base {
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 222.2 47.4% 11.2%;
+		--card: 0 0% 100%;
+		--card-foreground: 222.2 47.4% 11.2%;
+		--ring: 243 75% 59%;
+		--radius: 1rem;
+	}
+	* { @apply border-border; }
+	body { @apply bg-background text-foreground; }
+}
