@@ -29,4 +29,4 @@
 body { @apply bg-background text-foreground; }
 
 /* Optional helpers */
-.card { @apply rounded-2xl border bg-white shadow-sm; }
+.card { @apply rounded-2xl border shadow-sm; }
